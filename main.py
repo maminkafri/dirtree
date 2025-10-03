@@ -32,7 +32,8 @@ def dump_tree(offset_string_list, path):
     entry_len = len(entries)
     for i, entry in enumerate(entries):
         entry_branch = ""
-        if i == entry_len - 1:
+        last_entry = i == entry_len - 1
+        if last_entry:
             entry_branch = f"{LAST_BRANCH} "
         else:
             entry_branch = f"{MID_BRANCH} "
@@ -42,7 +43,11 @@ def dump_tree(offset_string_list, path):
         if entry.is_dir():
             entry_name = entry_branch + DIR_COLOR + entry.name + ENDC
             print("".join(offset_string_list) + entry_name)
-            OFFSET_STRING = f"{NO_BRANCH}   "
+            if not last_entry:
+                OFFSET_STRING = f"{NO_BRANCH}   "
+            else:
+                OFFSET_STRING = "    "
+
             offset_string_list.append(OFFSET_STRING)
             dump_tree(offset_string_list, entry.path)
             offset_string_list.pop()
