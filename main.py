@@ -1,5 +1,16 @@
+import os
+
 def main():
-    print("hello world!")
+    path = "."
+
+    try:
+        dircontent = os.scandir(path)
+    except FileNotFoundError as e:
+        print(f"dirtree error: {e}")
+
+    for i in dircontent:
+        print(i.path)
+        print(i.is_dir())
 
 
 if __name__ == "__main__":
