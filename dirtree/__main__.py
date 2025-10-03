@@ -21,9 +21,13 @@ def main():
     args = parser.parse_args()
 
     print(DIR_COLOR + args.dir + ENDC)
-    dump_tree([OFFSET_STRING], args.dir, show_hidden=args.all)
+    dir_count, file_count = dump_tree([OFFSET_STRING], args.dir, show_hidden=args.all)
+    print(f"\n{dir_count + 1} directories", end=", ")
+    print(f"{file_count} files")
 
 def dump_tree(offset_string_list, path, show_hidden=False):
+    dir_count = 0
+    file_count = 0
     with os.scandir(path) as entries:
         if show_hidden:
             entries = list(entries)
@@ -48,6 +52,7 @@ def dump_tree(offset_string_list, path, show_hidden=False):
 
             entry_name = ""
             if entry.is_dir():
+                dir_count = dir_count + 1
                 entry_name = entry_branch + DIR_COLOR + entry.name + ENDC
                 print("".join(offset_string_list) + entry_name)
                 if not last_entry:
@@ -56,12 +61,16 @@ def dump_tree(offset_string_list, path, show_hidden=False):
                     OFFSET_STRING = "    "
 
                 offset_string_list.append(OFFSET_STRING)
-                dump_tree(offset_string_list, entry.path)
+                new_dir_count, new_file_count = dump_tree(offset_string_list, entry.path)
+                dir_count += new_dir_count
+                file_count += new_file_count
                 offset_string_list.pop()
             else:
+                file_count = file_count + 1
                 entry_name = entry_branch + entry.name
                 print("".join(offset_string_list) + entry_name)
 
+    return dir_count, file_count
 
 
 if __name__ == "__main__":
