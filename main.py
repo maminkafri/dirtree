@@ -1,3 +1,4 @@
+import argparse
 import os
 
 MID_BRANCH = "├──"
@@ -10,10 +11,16 @@ ENDC = "\033[0m"
 OFFSET_STRING = ""
 
 def main():
-    path = "test_dir"
+    parser = argparse.ArgumentParser(
+            prog="my_tree",
+            usage="%(prog)s [dir]",
+            description="display dir content in a nice tree structure"
+            )
+    parser.add_argument('dir', nargs="?",default=".")
+    args = parser.parse_args()
 
-    print(DIR_COLOR + path + ENDC)
-    dump_tree([OFFSET_STRING], path)
+    print(DIR_COLOR + args.dir + ENDC)
+    dump_tree([OFFSET_STRING], args.dir)
 
 def dump_tree(offset_string_list, path):
     try:
