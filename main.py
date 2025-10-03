@@ -23,37 +23,33 @@ def main():
     dump_tree([OFFSET_STRING], args.dir)
 
 def dump_tree(offset_string_list, path):
-    try:
-        entries = list(os.scandir(path))
-    except FileNotFoundError as e:
-        print(f"dirtree error: {e}")
-        exit(1)
-
-    entry_len = len(entries)
-    for i, entry in enumerate(entries):
-        entry_branch = ""
-        last_entry = i == entry_len - 1
-        if last_entry:
-            entry_branch = f"{LAST_BRANCH} "
-        else:
-            entry_branch = f"{MID_BRANCH} "
-
-
-        entry_name = ""
-        if entry.is_dir():
-            entry_name = entry_branch + DIR_COLOR + entry.name + ENDC
-            print("".join(offset_string_list) + entry_name)
-            if not last_entry:
-                OFFSET_STRING = f"{NO_BRANCH}   "
+    with os.scandir(path) as entries:
+        entries = list(entries)
+        entry_len = len(entries)
+        for i, entry in enumerate(entries):
+            entry_branch = ""
+            last_entry = i == entry_len - 1
+            if last_entry:
+                entry_branch = f"{LAST_BRANCH} "
             else:
-                OFFSET_STRING = "    "
+                entry_branch = f"{MID_BRANCH} "
 
-            offset_string_list.append(OFFSET_STRING)
-            dump_tree(offset_string_list, entry.path)
-            offset_string_list.pop()
-        else:
-            entry_name = entry_branch + entry.name
-            print("".join(offset_string_list) + entry_name)
+
+            entry_name = ""
+            if entry.is_dir():
+                entry_name = entry_branch + DIR_COLOR + entry.name + ENDC
+                print("".join(offset_string_list) + entry_name)
+                if not last_entry:
+                    OFFSET_STRING = f"{NO_BRANCH}   "
+                else:
+                    OFFSET_STRING = "    "
+
+                offset_string_list.append(OFFSET_STRING)
+                dump_tree(offset_string_list, entry.path)
+                offset_string_list.pop()
+            else:
+                entry_name = entry_branch + entry.name
+                print("".join(offset_string_list) + entry_name)
 
 
 
