@@ -12,7 +12,7 @@ OFFSET_STRING = ""
 
 def main():
     parser = argparse.ArgumentParser(
-            prog="my_tree",
+            prog="dirtree",
             usage="%(prog)s [dir]",
             description="display dir content in a nice tree structure"
             )
