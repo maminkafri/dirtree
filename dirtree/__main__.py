@@ -13,19 +13,31 @@ OFFSET_STRING = ""
 def main():
     parser = argparse.ArgumentParser(
             prog="dirtree",
-            usage="%(prog)s [dir]",
+            usage="%(prog)s [options] [dir]",
             description="display dir content in a nice tree structure"
             )
     parser.add_argument('dir', nargs="?",default=".")
+    parser.add_argument('-a', '--all', action="store_true", help="Account for hidden directory (directory beginning with .)")
     args = parser.parse_args()
 
     print(DIR_COLOR + args.dir + ENDC)
-    dump_tree([OFFSET_STRING], args.dir)
+    dump_tree([OFFSET_STRING], args.dir, show_hidden=args.all)
 
-def dump_tree(offset_string_list, path):
+def dump_tree(offset_string_list, path, show_hidden=False):
     with os.scandir(path) as entries:
-        entries = list(entries)
+        if show_hidden:
+            entries = list(entries)
+        else:
+            entries = [e for e in entries if not e.name.startswith(".")]
+
+        # Sort: directories first, then files, alphabetical
+        entries = sorted(
+            entries,
+            key=lambda e: (not e.is_dir(), e.name.lower())
+        )
         entry_len = len(entries)
+
+
         for i, entry in enumerate(entries):
             entry_branch = ""
             last_entry = i == entry_len - 1
@@ -33,7 +45,6 @@ def dump_tree(offset_string_list, path):
                 entry_branch = f"{LAST_BRANCH} "
             else:
                 entry_branch = f"{MID_BRANCH} "
-
 
             entry_name = ""
             if entry.is_dir():
