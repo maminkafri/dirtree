@@ -1,0 +1,13 @@
+[project]
+name = "dirtree"
+version = "0.1.0"
+description = "Display directory content in a nice tree structure"
+authors = [{ name = "Your Name" }]
+readme = "README.md"
+requires-python = ">=3.7"
+
+[project.scripts]
+dirtree = "dirtree.__main__:main"
+
+[tool.setuptools]
+packages = ["dirtree"]
